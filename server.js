@@ -48,7 +48,7 @@ app.use("/search", SearchRoute);
 
 (async () => {
     try{
-        await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+        await mongoose.connect(process.env.MONGODB_URI)
 
         console.log("Connected to Database");
         app.listen(PORT, () => {
