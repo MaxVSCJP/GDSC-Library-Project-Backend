@@ -2,7 +2,7 @@ This is a practise project made s a final project for GDSC 2024 Backend Course.
 This is just the backend of the project, the frontend will be made another time.
 
 If you want to clone this project, make sure to install the neccessary modules that can be seen in the package.json file's dependencies attribute.
-You also need to add an .env file to the root of the project and add a "JWT_SECRET" attribute in it for the code to function.
+You also need to add an .env file to the root of the project and add a "JWT_SECRET" attribute in it for the code to function as well as a "MONGODB_URI" attribute along with your own Mongodb Atlas Cluster.
 
 Anbibu is a platform which allows books vendors and libraries to manage their libraries online. In doing so it also allows potential readers or buyers to see all the available books on the platform giving book vendors a place to market their libraries.
 
