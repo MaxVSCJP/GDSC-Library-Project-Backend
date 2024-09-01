@@ -4,12 +4,13 @@ const mongoose = require("mongoose");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const rateLimit = require('express-rate-limit');
+require("dotenv").config();
 const app = express();
 const PORT = 6341;
 const BookRoutes = require("./Routing/BookRoutes");
 const AuthRoutes = require("./Routing/AuthRoutes");
 const UserRoutes = require("./Routing/UserRoutes");
-const SearchRoute = require("./Routing/SearchRoute")
+const SearchRoute = require("./Routing/SearchRoute");
 
 const corsOptions = {
     origin: "*",
@@ -47,7 +48,8 @@ app.use("/search", SearchRoute);
 
 (async () => {
     try{
-        await mongoose.connect("mongodb://localhost:27017/libraryDB");
+        await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+
         console.log("Connected to Database");
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
