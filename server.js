@@ -6,7 +6,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const rateLimit = require('express-rate-limit');
 require("dotenv").config();
 const app = express();
-const PORT = 6341;
+const PORT = process.env.PORT || 1738;
 const BookRoutes = require("./Routing/BookRoutes");
 const AuthRoutes = require("./Routing/AuthRoutes");
 const UserRoutes = require("./Routing/UserRoutes");
