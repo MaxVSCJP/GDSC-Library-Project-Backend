@@ -9,7 +9,7 @@ const PORT = 6341;
 const BookRoutes = require("./Routing/BookRoutes");
 const AuthRoutes = require("./Routing/AuthRoutes");
 const UserRoutes = require("./Routing/UserRoutes");
-
+const SearchRoute = require("./Routing/SearchRoute")
 
 const corsOptions = {
     origin: "*",
@@ -40,6 +40,7 @@ app.use(cors(corsOptions))
 app.use("/books", BookRoutes);
 app.use("/auth", AuthRoutes);
 app.use("/user", UserRoutes);
+app.use("/search", SearchRoute);
 
 
 
