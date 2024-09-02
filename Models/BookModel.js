@@ -24,7 +24,7 @@ const bookModel = new mongoose.Schema({
         type: String,
         required: false
     },
-    price: {
+    Price: {
         type: Number,
         default: 0
     },

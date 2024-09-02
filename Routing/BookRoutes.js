@@ -6,7 +6,7 @@ const authMW = require("../Middlewares/AuthorizationMW");
 
 router.post("/AddBook", authMW(), BookController.AddBook);
 router.get("/SearchBook/:name", authMW(), BookController.SearchBook);
-router.patch("/Edit/:id", authMW(), BookController.EditBook);
+router.patch("/EditBook/:id", authMW(), BookController.EditBook);
 router.delete("/DeleteBook", authMW(), BookController.DeleteBook);
 
 

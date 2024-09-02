@@ -47,6 +47,7 @@ exports.EditUser = [
 
 exports.DeleteUser = async (req, res) => {
     try {
+        await Books.deleteMany({owner: req.user.userId});
         const result = await User.findByIdAndDelete(req.user.userId);
 
         if (result.deletedCount === 0) {

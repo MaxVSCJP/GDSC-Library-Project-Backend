@@ -48,7 +48,7 @@ exports.AddBook = [
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { Title, Author, PublishYear, Genre, Copies, Description } = req.body;
+        const { Title, Author, PublishYear, Genre, Copies, Description, Price } = req.body;
 
         const newBook = new Books({
             Title,
@@ -57,6 +57,7 @@ exports.AddBook = [
             Genre,
             NumberOfCopies: Copies,
             Description,
+            Price,
             owner: req.user.userId
         });
 
@@ -73,7 +74,7 @@ exports.AddBook = [
 
 
 exports.DeleteBook = [
-    body('id')
+    body('bookId')
         .trim()
         .custom((value) => mongoose.Types.ObjectId.isValid(value))
         .withMessage('Invalid Book ID'),

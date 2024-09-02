@@ -28,12 +28,10 @@ exports.signup = [
         .isLength({ min: 8 }).withMessage('Password must be at least 6 characters long'),
 
     body('location')
-        .optional({ checkFalsy: true })
         .trim()
         .isLength({ max: 100 }).withMessage('Location must be less than 100 characters'),
 
     body('phone')
-        .optional({ checkFalsy: true })
         .trim()
         .matches(/^\d{10,15}$/).withMessage('Phone number must be between 10 to 15 digits'),
 
