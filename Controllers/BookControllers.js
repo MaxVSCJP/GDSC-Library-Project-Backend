@@ -19,6 +19,7 @@ exports.AddBook = [
         .withMessage('Publish Year must be a valid year'),
 
     body('Genre')
+        .optional()
         .isArray({ min: 1 }).withMessage('Genre is required and must be an array')
         .custom((genres) => {
             if (!genres.every(genre => typeof genre === 'string')) {
@@ -33,9 +34,14 @@ exports.AddBook = [
         .matches(/^[a-zA-Z0-9\s:,.-]+$/).withMessage('Invalid description'),
 
     body('Copies')
+        .optional()
         .isInt({ min: 1 }).withMessage('Number of Copies must be a positive integer'),
+    
+    body('price')
+    .optional()
+    .isFloat({min: 0}).withMessage("Price must be a positive number"),
 
-
+    
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -156,6 +162,7 @@ exports.EditBook = [
     body('Genre').optional().isArray().withMessage('Genre must be an array of strings'),
     body('NumberOfCopies').optional().isInt({ min: 1 }).withMessage('Number of Copies must be a positive integer'),
     body('Description').optional().trim().isLength({ max: 500 }).withMessage('Description should not exceed 500 characters'),
+    body('Price').optional().isFloat({ min: 0}).withMessage("Price must be a positive number"),
 
 
     async (req, res) => {

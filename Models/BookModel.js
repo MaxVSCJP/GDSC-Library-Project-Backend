@@ -18,15 +18,20 @@ const bookModel = new mongoose.Schema({
     },
     NumberOfCopies: {
         type: Number,
-        default: 5
+        default: 1
     },
     Description: {
         type: String,
         required: false
     },
+    price: {
+        type: Number,
+        default: 0
+    },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        required: true
     },
 });
 
