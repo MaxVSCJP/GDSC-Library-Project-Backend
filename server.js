@@ -43,8 +43,8 @@ app.use("/auth", AuthRoutes);
 app.use("/user", UserRoutes);
 app.use("/search", SearchRoute);
 app.get("/*", (req, res) => {
-    res.status(200).send("Welcome to the API");
-})
+    res.status(200).json({message: "Welcome to the API"});
+});
 
 
 
