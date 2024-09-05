@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const rateLimit = require('express-rate-limit');
+const xssClean = require("xss-clean");
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 1738;
@@ -34,6 +35,7 @@ app.use(helmet({
     }
 }));
 
+app.use(xssClean());
 app.use(mongoSanitize());
 app.use(limiter);
 app.use(express.json());
