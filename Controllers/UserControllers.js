@@ -5,11 +5,32 @@ const User = require("../Models/UserModel");
 const Books = require("../Models/BookModel");
 
 exports.EditUser = [
-    body('username').optional().trim().notEmpty().isLength({ min: 4 }).withMessage('Username must be at least 4 characters long'),
-    body('name').optional().trim().notEmpty().withMessage('Name cannot be empty'),
+    body('username')
+    .optional()
+    .trim()
+    .notEmpty()
+    .isLength({ min: 4 }).withMessage('Username must be at least 4 characters long')
+    .matches(/^[a-zA-Z0-9\s:-]+$/).withMessage('Invalid Username'),
+    
+    body('name')
+    .optional()
+    .trim()
+    .notEmpty().withMessage('Name cannot be empty')
+    .matches(/^[a-zA-Z0-9\s:-]+$/).withMessage('Invalid Name'),
+
     body('email').optional().isEmail().withMessage('Invalid email address'),
-    body('location').optional().trim().notEmpty().withMessage('Location cannot be empty'),
-    body('phone').optional().isMobilePhone().withMessage('Invalid phone number'),
+
+    body('location')
+    .optional()
+    .trim()
+    .notEmpty().withMessage('Location cannot be empty')
+    .matches(/^[a-zA-Z0-9\s,'-()]+$/).withMessage("Invalid Location"),
+
+
+    body('phone')
+    .optional()
+    .matches(/^\+?[0-9\s\-\(\)]+$/).withMessage('Invalid phone number')
+    .isLength({ min: 9, max: 15 }).withMessage('Phone number must be between 9 and 15 characters long'),
 
     async (req, res) => {
         const errors = validationResult(req);
@@ -18,11 +39,12 @@ exports.EditUser = [
         }
 
         const { username, email, phone } = req.body;
+        
 
         try {
             const existingUser = await User.findOne({ $or: [{ email }, {username}, { phone }] });
             if (existingUser) {
-                return res.status(400).json({ message: "Email, or Phone Number already in use" });
+                return res.status(400).json({ message: "Username, Email, or Phone Number already in use" });
             }
 
             const updateData = req.body;

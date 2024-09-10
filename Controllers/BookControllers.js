@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { body, param, validationResult } = require('express-validator');
 const Books = require("../Models/BookModel");
+const xss = require("xss")
 
 
 exports.AddBook = [
@@ -12,7 +13,7 @@ exports.AddBook = [
     body('Author')
         .trim()
         .isLength({ min: 1 }).withMessage('Author is required')
-        .matches(/^[a-zA-Z0-9\s:-]+$/).withMessage('Invalid author name'),
+        .matches(/^[a-zA-Z0-9\s:\-.]+$/).withMessage('Invalid author name'),
 
     body('PublishYear')
         .isInt({ min: 1450, max: new Date().getFullYear() })
@@ -115,15 +116,18 @@ exports.SearchBook = [
     param('name')
         .trim()
         .isLength({ min: 1 }).withMessage('Book name cannot be empty')
-        .matches(/^[a-zA-Z0-9\s]+$/).withMessage('Invalid book name'),
+        .matches(/^[a-zA-Z0-9\s+]+$/).withMessage('Invalid book name'),
 
     async (req, res) => {
+        console.log("errors");
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+        
 
-        const name = req.params.name;
+        let name = xss(req.params.name);
+        name = name.replace("+", " ");
 
         try {
             const books = await Books.find({
@@ -156,11 +160,28 @@ exports.EditBook = [
         .custom((value) => mongoose.Types.ObjectId.isValid(value))
         .withMessage('Invalid Book ID'),
 
-    body('Title').optional().trim().notEmpty().withMessage('Title cannot be empty'),
-    body('Author').optional().trim().notEmpty().withMessage('Author cannot be empty'),
+    body('Title')
+    .optional()
+    .trim()
+    .notEmpty().withMessage('Title cannot be empty')
+    .matches(/^[a-zA-Z0-9\s:-]+$/).withMessage('Invalid book title'),
+    body('Author')
+    .optional()
+    .trim()
+    .notEmpty().withMessage('Author cannot be empty')
+    .matches(/^[a-zA-Z0-9\s:\-.]+$/).withMessage('Invalid author name'),
     body('PublishYear').optional().isInt({ min: 1450, max: new Date().getFullYear() })
         .withMessage('Publish Year must be a valid year'),
-    body('Genre').optional().isArray().withMessage('Genre must be an array of strings'),
+    body('Genre')
+    .optional()
+    .isArray()
+    .withMessage('Genre must be an array of strings')
+    .custom((genres) => {
+        if (!genres.every(genre => typeof genre === 'string')) {
+            throw new Error('Each genre must be a string');
+        }
+        return true;
+    }),
     body('NumberOfCopies').optional().isInt({ min: 1 }).withMessage('Number of Copies must be a positive integer'),
     body('Description').optional().trim().isLength({ max: 500 }).withMessage('Description should not exceed 500 characters'),
     body('Price').optional().isFloat({ min: 0}).withMessage("Price must be a positive number"),
@@ -177,7 +198,7 @@ exports.EditBook = [
             const updateData = req.body;
 
             const bookOwner = await Books.aggregate([
-                { $match: { _id: mongoose.Types.ObjectId(bookId) } },
+                { $match: { _id: new mongoose.Types.ObjectId(bookId) } },
                 { $project: { owner: 1, _id: 0 } }
             ]);
 

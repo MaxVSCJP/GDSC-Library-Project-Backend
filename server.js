@@ -36,9 +36,9 @@ app.use(helmet({
 }));
 
 app.use(xssClean());
-app.use(mongoSanitize());
 app.use(limiter);
 app.use(express.json());
+app.use(mongoSanitize());
 app.use(cors(corsOptions))
 app.use("/books", BookRoutes);
 app.use("/auth", AuthRoutes);

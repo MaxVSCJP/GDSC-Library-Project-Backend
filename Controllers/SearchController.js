@@ -7,7 +7,7 @@ exports.SearchBook = [
     param('name')
         .trim()
         .isLength({ min: 1 }).withMessage('Book name cannot be empty')
-        .matches(/^[a-zA-Z0-9\s]+$/).withMessage('Invalid book name'),
+        .matches(/^[a-zA-Z0-9\s+]+$/).withMessage('Invalid book name'),
 
     async (req, res) => {
         const errors = validationResult(req);
