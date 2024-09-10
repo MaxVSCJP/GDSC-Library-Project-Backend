@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const { body, param, validationResult } = require('express-validator');
 const Books = require("../Models/BookModel");
-const xss = require("xss")
 
 
 exports.AddBook = [
@@ -126,7 +125,7 @@ exports.SearchBook = [
         }
         
 
-        let name = xss(req.params.name);
+        let name = req.params.name;
         name = name.replace("+", " ");
 
         try {
