@@ -62,4 +62,4 @@ app.get("/*", (req, res) => {
   }
 })();
 
-export default handler = serverless(app);
+export const handler = serverless(app);
