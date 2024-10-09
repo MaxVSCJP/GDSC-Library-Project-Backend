@@ -62,4 +62,4 @@ app.get("/*", (req, res) => {
   }
 })();
 
-export const handler = serverless(app);
+module.exports.handler = serverless(app);
