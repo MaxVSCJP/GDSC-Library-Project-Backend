@@ -1,0 +1,23 @@
+[functions]
+  external_node_modules = [
+  "express",
+  "serverless-http",
+  "bcrypt",
+  "cors",
+  "dotenv",
+  "express-mongo-sanitize",
+  "express-rate-limit",
+  "express-validator",
+  "helmet",
+  "jsonwebtoken",
+  "mongodb",
+  "mongoose",
+  "xss-clean"
+]
+node_bundler = "esbuild"
+
+[[redirects]]
+  force = true
+  from = "/*"
+  status = 200
+  to = "/server.js"
