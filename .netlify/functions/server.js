@@ -14,6 +14,33 @@ const AuthRoutes = require("../../Routing/AuthRoutes");
 const UserRoutes = require("../../Routing/UserRoutes");
 const SearchRoute = require("../../Routing/SearchRoute");
 
+let isConnected = false; // Track if MongoDB is already connected
+
+const connectToDatabase = async () => {
+  if (isConnected) {
+    console.log("Reusing existing database connection");
+    return;
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    isConnected = true;
+    console.log("Connected to Database");
+  } catch (err) {
+    console.error("Error connecting to database", err);
+    throw err; // This will handle any errors and exit if connection fails
+  }
+};
+
+// Middleware to ensure MongoDB is connected before handling any requests
+app.use(async (req, res, next) => {
+  await connectToDatabase();
+  next();
+});
+
 const corsOptions = {
   origin: "*",
   optionsSuccessStatus: 200,
@@ -48,14 +75,5 @@ app.use("/search", SearchRoute);
 app.get("/*", (req, res) => {
   res.status(200).json({ message: "Welcome to the API" });
 });
-
-(async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log("Connected to Database");
-  } catch (err) {
-    console.log(err);
-  }
-})();
 
 module.exports.handler = serverless(app);
