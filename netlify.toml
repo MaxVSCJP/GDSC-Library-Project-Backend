@@ -1,5 +1,4 @@
 [functions]
-  functions = "."
   directory = "."
   external_node_modules = [
   "express",
