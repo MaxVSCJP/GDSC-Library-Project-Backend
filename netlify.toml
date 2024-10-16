@@ -20,5 +20,5 @@ node_bundler = "esbuild"
 [[redirects]]
   force = true
   from = "/*"
+  to = "/"
   status = 200
-  to = "/server"
