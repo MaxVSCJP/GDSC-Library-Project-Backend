@@ -1,5 +1,4 @@
 [functions]
-  directory = "."
   external_node_modules = [
   "express",
   "serverless-http",
@@ -16,9 +15,10 @@
   "xss-clean"
 ]
 node_bundler = "esbuild"
+directory = "."
 
 [[redirects]]
   force = true
   from = "/*"
-  to = "/"
-  status = 200
+  to = "/server/:splat"
+  status = 301
