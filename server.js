@@ -9,10 +9,10 @@ const xssClean = require("xss-clean");
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 1738;
-const BookRoutes = require("../../Routing/BookRoutes");
-const AuthRoutes = require("../../Routing/AuthRoutes");
-const UserRoutes = require("../../Routing/UserRoutes");
-const SearchRoute = require("../../Routing/SearchRoute");
+const BookRoutes = require("./Routing/BookRoutes");
+const AuthRoutes = require("./Routing/AuthRoutes");
+const UserRoutes = require("./Routing/UserRoutes");
+const SearchRoute = require("./Routing/SearchRoute");
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({

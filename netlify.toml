@@ -20,4 +20,4 @@ node_bundler = "esbuild"
   force = true
   from = "/*"
   status = 200
-  to = "/.netlify/functions/server/:splat"
+  to = "/server/:splat"
