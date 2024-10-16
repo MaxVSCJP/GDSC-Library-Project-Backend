@@ -13,6 +13,11 @@ const BookRoutes = require("./Routing/BookRoutes");
 const AuthRoutes = require("./Routing/AuthRoutes");
 const UserRoutes = require("./Routing/UserRoutes");
 const SearchRoute = require("./Routing/SearchRoute");
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloudinary_url: process.env.CLOUDINARY_URL,
+});
 
 let isConnected = false;
 
@@ -55,8 +60,13 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
+        imgSrc: ["'self'"],
         scriptSrc: ["'self'"],
+        styleSrc: ["'self'"],
         objectSrc: ["'none'"],
+        connectSrc: ["'self'"],
+        mediaSrc: ["'self'"],
+        fontSrc: ["'self'"],
       },
     },
   })

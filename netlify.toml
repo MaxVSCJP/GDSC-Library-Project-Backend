@@ -1,5 +1,4 @@
 [functions]
-  directory = "."
   external_node_modules = [
   "express",
   "serverless-http",
@@ -21,4 +20,4 @@ node_bundler = "esbuild"
   force = true
   from = "/*"
   status = 200
-  to = "/server/:splat"
+  to = "/.netlify/functions/server/:splat"
