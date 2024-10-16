@@ -21,4 +21,4 @@ node_bundler = "esbuild"
   force = true
   from = "/*"
   status = 200
-  to = "/server/:splat"
+  to = "/server"
