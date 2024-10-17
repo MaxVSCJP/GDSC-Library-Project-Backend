@@ -13,7 +13,9 @@
   "jsonwebtoken",
   "mongodb",
   "mongoose",
-  "xss-clean"
+  "xss-clean",
+  "multer",
+  "cloudinary"
   ]
   node_bundler = "esbuild"
 
