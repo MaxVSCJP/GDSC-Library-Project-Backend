@@ -15,10 +15,9 @@
   "xss-clean"
 ]
 node_bundler = "esbuild"
-directory = "."
 
 [[redirects]]
   force = true
   from = "/*"
-  to = "/server/:splat"
-  status = 301
+  to = "/.netlify/functions/server/:splat"
+  status = 200
