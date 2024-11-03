@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const cloudinary = require("cloudinary").v2;
 const { check, body, param, validationResult } = require("express-validator");
 const Books = require("../Models/BookModel");
+const User = require("../Models/UserModel");
 require("dotenv").config();
 
 exports.AddBook = [
@@ -83,28 +84,33 @@ exports.AddBook = [
     const { Title, Author, PublishYear, Genre, Copies, Description, Price } =
       req.body;
 
-    let bookImageURL;
+    let result;
+    if (req.file.buffer) {
+      const uploadFromBuffer = (buffer) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: "BookImages",
+              width: 500,
+              crop: "scale",
+              quality: "60",
+              format: "webp",
+              unique_filename: true,
+            },
+            (error, result) => {
+              if (result) {
+                resolve(result);
+              } else {
+                reject(error);
+              }
+            }
+          );
+          stream.end(buffer);
+        });
+      };
 
-    await cloudinary.uploader.upload_stream(
-      {
-        folder: "BookImages",
-        width: 500,
-        crop: "scale",
-        quality: "60",
-        format: "webp",
-        unique_filename: true,
-      },
-      (error, result) => {
-        if (error) {
-          res
-            .status(500)
-            .json({ Status: "Failed", message: "Failed to upload image" });
-        } else {
-          bookImageURL = result.public_id;
-          req.file.stream.pipe(result);
-        }
-      }
-    );
+      result = await uploadFromBuffer(req.file.buffer);
+    }
 
     const newBook = new Books({
       Title,
@@ -115,11 +121,16 @@ exports.AddBook = [
       Description,
       Price,
       owner: req.user.userId,
-      BookImageURL: bookImageURL,
+      BookImageURL: result ? result.secure_url : null,
+      BookImageID: result ? result.public_id : null,
     });
 
     try {
       const data = await newBook.save();
+
+      await User.findByIdAndUpdate(req.user.userId, {
+        $push: { books: data._id },
+      });
       res.status(201).json({ Status: "Successful", data });
     } catch (err) {
       console.error("Failed to Add Book: ", err);
@@ -143,8 +154,7 @@ exports.DeleteBook = [
     const { bookId } = req.body;
 
     try {
-      const book = await Books.findById(bookId).select("owner");
-      const bookImageId = await Books.findById(bookId).select("BookImageURL");
+      const book = await Books.findById(bookId).select("owner BookImageID");
 
       if (!book) {
         return res
@@ -158,8 +168,8 @@ exports.DeleteBook = [
           .json({ Status: "Failed", message: "Unauthorized to Delete" });
       }
 
-      if (bookImageId) {
-        await cloudinary.uploader.destroy(bookImageId.BookImageURL, (error) => {
+      if (book.BookImageID) {
+        await cloudinary.uploader.destroy(book.BookImageID, (error) => {
           if (error) {
             res
               .status(500)
@@ -169,6 +179,10 @@ exports.DeleteBook = [
       }
 
       await Books.findByIdAndDelete(bookId);
+
+      await User.findByIdAndUpdate(req.user.userId, {
+        $pull: { books: data._id },
+      });
 
       res.status(204).send();
     } catch (err) {
@@ -305,23 +319,22 @@ exports.EditBook = [
       const bookId = req.params.id;
       const updateData = req.body;
 
-      const bookOwner = await Books.findById(bookId).select("owner");
-      const bookImageId = await Books.findById(bookId).select("BookImageURL");
+      const book = await Books.findById(bookId).select("owner BookImageID");
 
-      if (!bookOwner) {
+      if (!book) {
         return res
           .status(404)
           .json({ Status: "Failed", message: "Book not found" });
       }
 
-      if (bookOwner.owner.toString() !== req.user.userId) {
+      if (book.owner.toString() !== req.user.userId) {
         return res
           .status(403)
           .json({ Status: "Failed", message: "Unauthorized to edit" });
       }
 
-      if (bookImageId) {
-        await cloudinary.uploader.destroy(bookImageId.BookImageURL, (error) => {
+      if (req.file.buffer) {
+        await cloudinary.uploader.destroy(book.BookImageID, (error) => {
           if (error) {
             res.status(500).json({
               Status: "Failed",
@@ -330,27 +343,32 @@ exports.EditBook = [
           }
         });
 
-        cloudinary.uploader.upload_stream(
-          {
-            public_id: bookImageId.BookImageURL,
-            folder: "BookImages",
-            width: 500,
-            crop: "scale",
-            quality: "60",
-            format: "webp",
-            unique_filename: true,
-          },
-          (error, result) => {
-            if (error) {
-              res.status(500).json({
-                Status: "Failed",
-                message: "Failed to update book image",
-              });
-            } else {
-              req.file.stream.pipe(result);
-            }
-          }
-        );
+        let result;
+        const uploadFromBuffer = (buffer) => {
+          return new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+              {
+                public_id: book.BookImageID,
+                folder: "BookImages",
+                width: 500,
+                crop: "scale",
+                quality: "60",
+                format: "webp",
+                unique_filename: true,
+              },
+              (error, result) => {
+                if (result) {
+                  resolve(result);
+                } else {
+                  reject(error);
+                }
+              }
+            );
+            stream.end(buffer);
+          });
+        };
+
+        result = await uploadFromBuffer(req.file.buffer);
       }
 
       const updatedBook = await Books.findByIdAndUpdate(

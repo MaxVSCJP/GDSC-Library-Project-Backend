@@ -32,6 +32,10 @@ const bookModel = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  BookImageID: {
+    type: String,
+    required: false,
+  },
   BookImageURL: {
     type: String,
     required: false,
