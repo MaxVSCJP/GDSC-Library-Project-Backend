@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { param, validationResult } = require("express-validator");
 const Books = require("../Models/BookModel");
+const User = require("../Models/UserModel");
 
 exports.SearchBook = [
   param("name")

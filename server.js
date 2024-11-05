@@ -1,5 +1,4 @@
 const express = require("express");
-const serverless = require("serverless-http");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
@@ -9,40 +8,14 @@ const xssClean = require("xss-clean");
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 1738;
-const BookRoutes = require("../../Routing/BookRoutes");
-const AuthRoutes = require("../../Routing/AuthRoutes");
-const UserRoutes = require("../../Routing/UserRoutes");
-const SearchRoute = require("../../Routing/SearchRoute");
+const BookRoutes = require("./Routing/BookRoutes");
+const AuthRoutes = require("./Routing/AuthRoutes");
+const UserRoutes = require("./Routing/UserRoutes");
+const SearchRoute = require("./Routing/SearchRoute");
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
   cloudinary_url: process.env.CLOUDINARY_URL,
-});
-
-let isConnected = false;
-
-const connectToDatabase = async () => {
-  if (isConnected) {
-    console.log("Reusing existing database connection");
-    return;
-  }
-
-  try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    isConnected = true;
-    console.log("Connected to Database");
-  } catch (err) {
-    console.error("Error connecting to database", err);
-    throw err;
-  }
-};
-
-app.use(async (req, res, next) => {
-  await connectToDatabase();
-  next();
 });
 
 const corsOptions = {
@@ -85,4 +58,14 @@ app.get("/*", (req, res) => {
   res.status(200).json({ message: "Welcome to the API" });
 });
 
-module.exports.handler = serverless(app);
+(async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("Connected to Database");
+    app.listen(PORT, () => {
+      console.log(`Server running at ${PORT}`);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+})();
