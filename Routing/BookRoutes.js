@@ -24,7 +24,7 @@ router.patch(
   BookController.EditBook
 );
 router.delete(
-  "/DeleteBook",
+  "/DeleteBook/:bookId",
   authMW(),
   csrf.csrfProtection,
   BookController.DeleteBook

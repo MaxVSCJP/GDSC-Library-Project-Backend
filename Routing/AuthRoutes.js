@@ -8,5 +8,11 @@ const csrf = require("../Middlewares/CSRFProtectionMW");
 router.post("/login", authController.Login);
 router.post("/signup", usernameAvailabilityMW, authController.Signup);
 router.post("/logout", authMW(), csrf.csrfProtection, authController.Logout);
+router.get(
+  "/check",
+  authMW(),
+  csrf.csrfProtection,
+  authController.checkLogStatus
+);
 
 module.exports = router;

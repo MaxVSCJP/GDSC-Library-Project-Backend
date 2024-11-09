@@ -27,10 +27,14 @@ exports.AddBook = [
 
   body("Genre")
     .optional()
-    .isArray({ min: 1 })
-    .withMessage("Genre is required and must be an array")
-    .custom((genres) => {
-      if (!genres.every((genre) => typeof genre === "string")) {
+    .custom((value) => {
+      if (typeof value === "string") {
+        value = JSON.parse(value); // Parse JSON string to array
+      }
+      if (!Array.isArray(value)) {
+        throw new Error("Genre must be an array of strings");
+      }
+      if (!value.every((genre) => typeof genre === "string")) {
         throw new Error("Each genre must be a string");
       }
       return true;
@@ -79,6 +83,14 @@ exports.AddBook = [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
+    }
+
+    if (req.body.Genre) {
+      req.body.Genre = req.body.Genre.replace("[", "")
+        .replace("]", "")
+        .replaceAll(`"`, "")
+        .split(",")
+        .map((g) => g.trim());
     }
 
     const { Title, Author, PublishYear, Genre, Copies, Description, Price } =
@@ -140,18 +152,16 @@ exports.AddBook = [
 ];
 
 exports.DeleteBook = [
-  body("bookId")
-    .trim()
+  param("bookId")
     .custom((value) => mongoose.Types.ObjectId.isValid(value))
     .withMessage("Invalid Book ID"),
-
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { bookId } = req.body;
+    const bookId = req.params.bookId;
 
     try {
       const book = await Books.findById(bookId).select("owner BookImageID");
@@ -171,18 +181,19 @@ exports.DeleteBook = [
       if (book.BookImageID) {
         await cloudinary.uploader.destroy(book.BookImageID, (error) => {
           if (error) {
-            res
-              .status(500)
-              .json({ Status: "Failed", message: "Failed to Delete Book" });
+            res.status(500).json({
+              Status: "Failed",
+              message: "Failed to Delete Book",
+            });
           }
         });
       }
 
-      await Books.findByIdAndDelete(bookId);
-
       await User.findByIdAndUpdate(req.user.userId, {
-        $pull: { books: data._id },
+        $pull: { books: bookId },
       });
+
+      await Books.findByIdAndDelete(bookId);
 
       res.status(204).send();
     } catch (err) {
@@ -264,10 +275,14 @@ exports.EditBook = [
     .withMessage("Publish Year must be a valid year"),
   body("Genre")
     .optional()
-    .isArray()
-    .withMessage("Genre must be an array of strings")
-    .custom((genres) => {
-      if (!genres.every((genre) => typeof genre === "string")) {
+    .custom((value) => {
+      if (typeof value === "string") {
+        value = JSON.parse(value); // Parse JSON string to array
+      }
+      if (!Array.isArray(value)) {
+        throw new Error("Genre must be an array of strings");
+      }
+      if (!value.every((genre) => typeof genre === "string")) {
         throw new Error("Each genre must be a string");
       }
       return true;
@@ -315,6 +330,13 @@ exports.EditBook = [
     }
 
     try {
+      if (req.body.Genre) {
+        req.body.Genre = req.body.Genre.replace("[", "")
+          .replace("]", "")
+          .replaceAll(`"`, "")
+          .split(",")
+          .map((g) => g.trim());
+      }
       const bookId = req.params.id;
       const updateData = req.body;
 

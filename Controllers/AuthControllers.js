@@ -31,7 +31,7 @@ exports.Signup = [
     .notEmpty()
     .withMessage("Password is required")
     .isLength({ min: 8 })
-    .withMessage("Password must be at least 6 characters long"),
+    .withMessage("Password must be at least 8 characters long"),
 
   body("location")
     .trim()
@@ -124,6 +124,7 @@ exports.Login = [
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 100,
       });
 
       res.cookie("csrfToken", csrfToken, {
@@ -131,6 +132,7 @@ exports.Login = [
         secure: process.env.NODE_ENV === "production",
         sameSite: "none",
         path: "/",
+        maxAge: 1000 * 60 * 60 * 24 * 100,
       });
 
       res.status(200).json({ message: "Succesfully logged in " });
@@ -143,19 +145,28 @@ exports.Login = [
 
 exports.Logout = (req, res) => {
   try {
-    res.clearcookie("token", {
+    res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: none,
+      sameSite: "none",
     });
+    console.log("token cleared");
 
     res.clearCookie("csrfCookie", {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      path: "/",
     });
+    console.log("csrftoken cleared");
 
     res.status(200).json({ message: "Logged out Succesfully" });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ error: err.message });
   }
+};
+
+exports.checkLogStatus = (req, res) => {
+  res.status(204).send();
 };
