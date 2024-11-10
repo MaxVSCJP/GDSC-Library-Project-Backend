@@ -1,48 +1,28 @@
 const express = require("express");
-const serverless = require("serverless-http");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const rateLimit = require("express-rate-limit");
 const xssClean = require("xss-clean");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 1738;
-const BookRoutes = require("./Routing/BookRoutes");
-const AuthRoutes = require("./Routing/AuthRoutes");
-const UserRoutes = require("./Routing/UserRoutes");
-const SearchRoute = require("./Routing/SearchRoute");
+const BookRoutes = require("./Routes/BookRoutes");
+const AuthRoutes = require("./Routes/AuthRoutes");
+const UserRoutes = require("./Routes/UserRoutes");
+const SearchRoute = require("./Routes/SearchRoute");
+const cloudinary = require("cloudinary").v2;
 
-let isConnected = false;
-
-const connectToDatabase = async () => {
-  if (isConnected) {
-    console.log("Reusing existing database connection");
-    return;
-  }
-
-  try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    isConnected = true;
-    console.log("Connected to Database");
-  } catch (err) {
-    console.error("Error connecting to database", err);
-    throw err;
-  }
-};
-
-app.use(async (req, res, next) => {
-  await connectToDatabase();
-  next();
+cloudinary.config({
+  cloudinary_url: process.env.CLOUDINARY_URL,
 });
 
 const corsOptions = {
-  origin: "*",
+  origin: "http://localhost:5173",
   optionsSuccessStatus: 200,
+  credentials: true,
 };
 
 const limiter = rateLimit({
@@ -55,8 +35,13 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
+        imgSrc: ["'self'"],
         scriptSrc: ["'self'"],
+        styleSrc: ["'self'"],
         objectSrc: ["'none'"],
+        connectSrc: ["'self'"],
+        mediaSrc: ["'self'"],
+        fontSrc: ["'self'"],
       },
     },
   })
@@ -65,6 +50,7 @@ app.use(
 app.use(xssClean());
 app.use(limiter);
 app.use(express.json());
+app.use(cookieParser());
 app.use(mongoSanitize());
 app.use(cors(corsOptions));
 app.use("/books", BookRoutes);
@@ -75,4 +61,14 @@ app.get("/*", (req, res) => {
   res.status(200).json({ message: "Welcome to the API" });
 });
 
-module.exports.handler = serverless(app);
+(async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("Connected to Database");
+    app.listen(PORT, () => {
+      console.log(`Server running at ${PORT}`);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+})();
