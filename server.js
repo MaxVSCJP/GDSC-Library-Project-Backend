@@ -6,15 +6,13 @@ const mongoSanitize = require("express-mongo-sanitize");
 const rateLimit = require("express-rate-limit");
 const xssClean = require("xss-clean");
 const cookieParser = require("cookie-parser");
-const morgan = require("morgan");
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 1738;
-const BookRoutes = require("./Routing/BookRoutes");
-const AuthRoutes = require("./Routing/AuthRoutes");
-const UserRoutes = require("./Routing/UserRoutes");
-const SearchRoute = require("./Routing/SearchRoute");
-const morganLogs = require("./Middlewares/MorganLogs");
+const BookRoutes = require("./Routes/BookRoutes");
+const AuthRoutes = require("./Routes/AuthRoutes");
+const UserRoutes = require("./Routes/UserRoutes");
+const SearchRoute = require("./Routes/SearchRoute");
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
@@ -55,7 +53,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(mongoSanitize());
 app.use(cors(corsOptions));
-app.use(morgan(morganLogs.logFormat, { stream: morganLogs.stream }));
 app.use("/books", BookRoutes);
 app.use("/auth", AuthRoutes);
 app.use("/user", UserRoutes);

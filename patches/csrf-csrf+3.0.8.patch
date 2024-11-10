@@ -1,0 +1,13 @@
+diff --git a/node_modules/csrf-csrf/lib/cjs/index.cjs b/node_modules/csrf-csrf/lib/cjs/index.cjs
+index 0ae0b17..4742225 100644
+--- a/node_modules/csrf-csrf/lib/cjs/index.cjs
++++ b/node_modules/csrf-csrf/lib/cjs/index.cjs
+@@ -62,7 +62,7 @@ function doubleCsrf({ getSecret, getSessionIdentifier = () => "", cookieName = "
+         const { csrfToken, csrfTokenHash } = generateTokenAndHash(req, overwrite, validateOnReuse);
+         const cookieContent = `${csrfToken}|${csrfTokenHash}`;
+         res.cookie(cookieName, cookieContent, { ...cookieOptions, httpOnly: true });
+-        return csrfToken;
++        return cookieContent;
+     };
+     const getCsrfCookieFromRequest = remainingCookieOptions.signed
+         ? (req) => req.signedCookies[cookieName]

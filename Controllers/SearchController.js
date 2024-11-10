@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const { param, validationResult } = require("express-validator");
 const Books = require("../Models/BookModel");
 const User = require("../Models/UserModel");
@@ -32,8 +31,9 @@ exports.SearchBook = [
           .status(404)
           .json({ Status: "Failed", message: "No books found" });
       }
+      console.log(res.elapsed);
 
-      res.json({
+      res.status(200).json({
         Status: "Successful",
         books,
       });
@@ -69,7 +69,7 @@ exports.SearchOwner = [
           .json({ Status: "Failed", message: "No Owner found with such id" });
       }
 
-      res.json({
+      res.status(200).json({
         Status: "Successful",
         owner,
       });
