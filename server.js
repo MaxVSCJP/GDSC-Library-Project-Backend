@@ -20,7 +20,7 @@ cloudinary.config({
 });
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "https://anbibu.netlify.app",
   optionsSuccessStatus: 200,
   credentials: true,
 };
