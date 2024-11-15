@@ -25,9 +25,9 @@ exports.stream = {
       url: logData[1],
       status: parseInt(logData[2]),
       responseTime: parseInt(logData[3]),
-      userId: logData[4],
-      username: logData[5],
-      ip: logData[6],
+      userId: logData[5],
+      username: logData[6],
+      ip: logData[7],
     });
     log.save().catch((err) => console.error(err));
   },
