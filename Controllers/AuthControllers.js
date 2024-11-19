@@ -118,7 +118,7 @@ exports.Login = [
         process.env.JWT_SECRET
       );
 
-      const csrfToken = csrf.generateToken(req, res, false, false);
+      const csrfToken = csrf.generateToken(req, res);
 
       res.cookie("token", token, {
         httpOnly: true,
