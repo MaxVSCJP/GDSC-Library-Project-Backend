@@ -9,6 +9,8 @@ const { doubleCsrfProtection, generateToken } = doubleCsrf({
     sameSite: "none",
     path: "/",
     secure: process.env.NODE_ENV === "production",
+    httpOnly: false,
+    maxAge: 1000 * 60 * 60 * 24 * 100,
   },
   ignoredMethods: ["HEAD", "OPTIONS"],
   getTokenFromRequest: (req) => req.headers["x-csrf-token"],

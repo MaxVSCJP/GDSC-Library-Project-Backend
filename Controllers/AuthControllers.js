@@ -127,14 +127,6 @@ exports.Login = [
         maxAge: 1000 * 60 * 60 * 24 * 100,
       });
 
-      res.cookie("csrfToken", csrfToken, {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-        path: "/",
-        maxAge: 1000 * 60 * 60 * 24 * 100,
-      });
-
       res.status(200).json({ message: "Succesfully logged in " });
     } catch (error) {
       res.status(500).json({ error: error.message });
