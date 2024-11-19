@@ -31,7 +31,6 @@ exports.SearchBook = [
           .status(404)
           .json({ Status: "Failed", message: "No books found" });
       }
-      console.log(res.elapsed);
 
       res.status(200).json({
         Status: "Successful",
