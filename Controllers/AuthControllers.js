@@ -124,8 +124,8 @@ exports.Login = [
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 100,
       });
+      res.setHeader("csrfToken", csrfToken);
 
       res.status(200).json({ message: "Succesfully logged in " });
     } catch (error) {
@@ -141,6 +141,7 @@ exports.Logout = (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "none",
+      expires: new Date(0),
     });
     console.log("token cleared");
 
@@ -149,6 +150,7 @@ exports.Logout = (req, res) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "none",
       path: "/",
+      expires: new Date(0),
     });
     console.log("csrftoken cleared");
 

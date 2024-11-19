@@ -23,6 +23,7 @@ const corsOptions = {
   origin: "https://anbibu.netlify.app",
   optionsSuccessStatus: 200,
   credentials: true,
+  exposedHeaders: ["csrfToken"],
 };
 
 const limiter = rateLimit({
