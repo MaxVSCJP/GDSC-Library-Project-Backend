@@ -19,7 +19,6 @@ exports.logFormat =
 exports.stream = {
   write: function (message) {
     const logData = message.trim().split(" ");
-    console.log(logData);
     const log = new Log({
       method: logData[0],
       url: logData[1],

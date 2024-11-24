@@ -143,7 +143,6 @@ exports.Logout = (req, res) => {
       sameSite: "none",
       expires: new Date(0),
     });
-    console.log("token cleared");
 
     res.clearCookie("csrfCookie", {
       httpOnly: false,
@@ -152,7 +151,6 @@ exports.Logout = (req, res) => {
       path: "/",
       expires: new Date(0),
     });
-    console.log("csrftoken cleared");
 
     res.status(200).json({ message: "Logged out Succesfully" });
   } catch (err) {
