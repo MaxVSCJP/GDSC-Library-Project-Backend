@@ -16,10 +16,9 @@ const { doubleCsrfProtection, generateToken } = doubleCsrf({
 
 function csrfMiddleware(req, res, next) {
   doubleCsrfProtection(req, res, (err) => {
-    console.error("CSRF Token from header: ", req.headers["x-csrf-token"]);
-    console.error("CSRF Token from cookie: ", req.cookies.csrfToken);
+    console.log("CSRF Token from header: ", req.headers["x-csrf-token"]);
+    console.log("CSRF Token from cookie: ", req.cookies.csrfToken);
     if (err) {
-      console.log(req.cookies);
       console.error(
         "Error, CSRF Token from header: ",
         req.headers["x-csrf-token"]
