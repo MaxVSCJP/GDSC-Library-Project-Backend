@@ -42,7 +42,7 @@ exports.AddBook = [
   body("Description")
     .optional()
     .trim()
-    .isLength({ max: 500 })
+    .isLength({ max: 2000 })
     .withMessage("Description should not exceed 500 characters")
     .matches(/^[a-zA-Z0-9\s:,.-]+$/)
     .withMessage("Invalid description"),
@@ -294,7 +294,7 @@ exports.EditBook = [
   body("Description")
     .optional()
     .trim()
-    .isLength({ max: 500 })
+    .isLength({ max: 2000 })
     .withMessage("Description should not exceed 500 characters"),
   body("Price")
     .optional()
