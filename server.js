@@ -20,7 +20,7 @@ cloudinary.config({
 });
 
 const corsOptions = {
-  origin: "https://anbibu.netlify.app",
+  origin: ["https://anbibu.netlify.app", "https://anbibu.pro.et"],
   optionsSuccessStatus: 200,
   credentials: true,
   exposedHeaders: ["csrfToken"],
