@@ -50,6 +50,12 @@ exports.Signup = [
       return res.status(400).json({ errors: errors.array() });
     }
 
+    if (req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to SignUp a new user" });
+    }
+
     const { name, username, email, password, location, phone } = req.body;
 
     try {
@@ -59,7 +65,7 @@ exports.Signup = [
       if (existingUser) {
         return res
           .status(400)
-          .json({ message: "Email, Username, or Phone Number already in use" });
+          .json({ error: "Email, Username, or Phone Number already in use" });
       }
 
       const hashed = await bcrypt.hash(password, 13);
@@ -114,7 +120,12 @@ exports.Login = [
       if (!isMatch) return res.status(403).json({ error: "Wrong Password" });
 
       const token = jwt.sign(
-        { userId: user._id, username: user.username, email: user.email },
+        {
+          userId: user._id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+        },
         process.env.JWT_SECRET
       );
 
@@ -127,7 +138,9 @@ exports.Login = [
       });
       res.setHeader("csrfToken", csrfToken);
 
-      res.status(200).json({ message: "Succesfully logged in " });
+      res
+        .status(200)
+        .json({ message: "Succesfully logged in ", role: user.role });
     } catch (error) {
       res.status(500).json({ error: error.message });
       console.log(error);
@@ -141,15 +154,14 @@ exports.Logout = (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "none",
-      expires: new Date(0),
+      path: "/",
     });
 
-    res.clearCookie("csrfCookie", {
-      httpOnly: false,
+    res.clearCookie("csrfToken", {
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "none",
       path: "/",
-      expires: new Date(0),
     });
 
     res.status(200).json({ message: "Logged out Succesfully" });

@@ -6,7 +6,13 @@ const authMW = require("../Middlewares/AuthorizationMW");
 const csrf = require("../Middlewares/CSRFProtectionMW");
 
 router.post("/login", authController.Login);
-router.post("/signup", usernameAvailabilityMW, authController.Signup);
+router.post(
+  "/signup",
+  authMW(),
+  csrf.csrfProtection,
+  usernameAvailabilityMW,
+  authController.Signup
+);
 router.post("/logout", authMW(), csrf.csrfProtection, authController.Logout);
 router.get(
   "/check",
