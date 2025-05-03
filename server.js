@@ -14,7 +14,6 @@ const AuthRoutes = require("./Routes/AuthRoutes");
 const UserRoutes = require("./Routes/UserRoutes");
 const SearchRoute = require("./Routes/SearchRoutes");
 const OrderRoute = require("./Routes/OrderRoutes");
-const WriterRoute = require("./Routes/WriterRoutes");
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
