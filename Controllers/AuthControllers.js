@@ -2,7 +2,6 @@ const User = require("../Models/UserModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cloudinary = require("cloudinary").v2;
-const csrf = require("../Middlewares/CSRFProtectionMW");
 const { body, check, validationResult } = require("express-validator");
 const emailer = require("nodemailer");
 require("dotenv").config();
