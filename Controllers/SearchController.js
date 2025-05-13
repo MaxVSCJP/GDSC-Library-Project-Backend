@@ -146,13 +146,13 @@ exports.GetAllBooks = [
             .skip(skip)
             .limit(limit)
             .select(
-              "Title Author PublishYear Genre Quantity Description Price BookType BookPDFURL BookImageURL"
+              "Title Author PublishYear Genre Quantity Description Price BookType BookPDFURL BookImageURL owner"
             ))
         : (books = await Books.find({ BookFrom: "writer" })
             .skip(skip)
             .limit(limit)
             .select(
-              "Title Author PublishYear Genre Quantity Description Price BookType BookPDFURL BookImageURL"
+              "Title Author PublishYear Genre Quantity Description Price BookType BookPDFURL BookImageURL owner"
             ));
 
       const totalBooks =
