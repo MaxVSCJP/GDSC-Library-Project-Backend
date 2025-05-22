@@ -91,7 +91,7 @@ exports.BuyBook = [
     .isLength({ min: 1 })
     .withMessage("ReturnURL is required")
     .matches(
-      /^https:\/\/(Anbibu\.(pro\.et|netlify\.app)|localhost:(5173|3000))\/book\/[a-zA-Z0-9]+$/
+      /^https:\/\/(anbibu\.(pro\.et|netlify\.app)|localhost:(5173|3000))\/book\/[a-zA-Z0-9]+$/
     )
     .withMessage("Invalid Return URL"),
 
